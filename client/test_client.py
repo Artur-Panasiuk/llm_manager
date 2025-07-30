@@ -1,7 +1,6 @@
 import time
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from datetime import datetime
 
 client = MongoClient("mongodb://localhost:27017")
 db = client.chat_db
@@ -13,8 +12,6 @@ def send_prompt(prompt_text, model_id):
         "model_id": model_id,
         "response": None,
         "status": "pending",
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
     }
     result = collection.insert_one(doc)
     return result.inserted_id
