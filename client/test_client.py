@@ -1,46 +1,43 @@
+import requests
 import time
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+import uuid
 
-client = MongoClient("mongodb://localhost:27017")
-db = client.chat_db
-collection = db.prompts
+from dotenv import load_dotenv
+import os
 
-def send_prompt(prompt_text, model_id):
-    doc = {
-        "prompt": prompt_text,
-        "model_id": model_id,
-        "response": None,
-        "status": "pending",
+load_dotenv()
+
+def send_prompt(prompt, model_id):
+    doc_id = str(uuid.uuid4())
+
+    payload = {
+        "id": doc_id,
+        "prompt": prompt,
+        "model": model_id
     }
-    result = collection.insert_one(doc)
-    return result.inserted_id
 
-def wait_for_response(doc_id, timeout=360):
-    start = time.time()
-    while time.time() - start < timeout:
-        doc = collection.find_one({"_id": ObjectId(doc_id)})
-        if doc and doc.get("status") == "done":
-            return doc["response"]
-        time.sleep(1)
-    return None
-
-if __name__ == "__main__":
-    prompt = input("Prompt: ")
-
-    print("Model:")
-    print("  0 - Qwen")
-    print("  1 - LLaMA")
     try:
-        model_id = int(input("Model ID: ").strip())
-    except ValueError:
+        response = requests.post(f"{os.getenv("API_URL")}/request", json=payload)
+        response.raise_for_status()
+        return doc_id
+    except Exception as e:
+        print("Failed to send prompt:", e)
         exit(1)
 
-    doc_id = send_prompt(prompt, model_id)
-    print("Waiting")
-    response = wait_for_response(doc_id)
+def ask_for_models():
+    try:
+        response = requests.get(f"{os.getenv("API_URL")}/models")
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print("Connection failed:", e)
+        exit(1)
 
-    if response:
-        print("\nANS:\n", response)
-    else:
-        print("\nTIMEOUT\n")
+
+if __name__ == "__main__":
+    [print(f"[{model[0]}]. {model[1]}") for model in ask_for_models()]
+
+    model_id = input("Model id: ")
+    prompt = input("Prompt: ")
+
+    doc_id = send_prompt(prompt, model_id)
