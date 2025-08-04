@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import requests
 import uuid
+import time
 import os
 
 load_dotenv()
@@ -31,6 +32,14 @@ def ask_for_models():
         print("Connection failed:", e)
         exit(1)
 
+def ask_for_answer(doc_id):
+    try:
+        response = requests.get(f"{os.getenv("API_URL")}/get/{doc_id}")
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print("Connection failed:", e)
+        exit(1)
 
 if __name__ == "__main__":
     [print(f"[{model[0]}]. {model[1]}") for model in ask_for_models()]
@@ -39,3 +48,23 @@ if __name__ == "__main__":
     prompt = input("Prompt: ")
 
     doc_id = send_prompt(prompt, model_id)
+
+    timeout = 999  # seconds
+    poll_interval = 2  # how often to check (in seconds)
+    waited = 0
+    result = None
+
+    while waited < timeout:
+        answer = ask_for_answer(doc_id)
+        
+        if answer.get("status") == "done":
+            result = answer.get("result", "")
+            break
+
+        time.sleep(poll_interval)
+        waited += poll_interval
+
+    if result:
+        print("AI response:", result)
+    else:
+        print("Timeout reached. No response from server.")
