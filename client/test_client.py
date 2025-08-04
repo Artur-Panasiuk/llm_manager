@@ -1,8 +1,6 @@
-import requests
-import time
-import uuid
-
 from dotenv import load_dotenv
+import requests
+import uuid
 import os
 
 load_dotenv()
@@ -11,9 +9,9 @@ def send_prompt(prompt, model_id):
     doc_id = str(uuid.uuid4())
 
     payload = {
-        "id": doc_id,
-        "prompt": prompt,
-        "model": model_id
+        "task_id": doc_id,
+        "model_id": model_id,
+        "prompt": prompt
     }
 
     try:

@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
-from model_handler import load_models_config
-
-app = Flask(__name__)
+from model_handler import load_models_config, get_model_by_id
 
 queue = []
+
+app = Flask(__name__)
 
 model_data = load_models_config()
 
@@ -18,19 +18,15 @@ def get_models():
 @app.route('/request', methods=['POST'])
 def handle_request():
     data = request.get_json()
-    if not all(k in data for k in ('id', 'model', 'prompt')):
-        return jsonify({'error': 'Missing fields'}), 400
+    required = {'task_id', 'model_id', 'prompt'}
 
-    queue.append({
-        'model': data['model'],
-        'prompt': data['prompt']
-    })
+    if not required.issubset(data):
+        return jsonify(error='Missing fields'), 400
 
-    print(queue)
+    queue.append({k: data[k] for k in ('task_id', 'model_id', 'prompt')})
 
-    # results[data['id']] = process_prompt(data['model'], data['prompt'])
+    return jsonify(status='queued', id=data['task_id']), 202
 
-    return jsonify({'status': 'queued', 'id': data['id']}), 202
 
 if __name__ == '__main__':
     app.run(debug=False)
