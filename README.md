@@ -7,7 +7,7 @@ Goal of this project is to make utilization of downloaded llm's easy in projects
 
 ## General Idea
 
-Client sends request with id, prompt, model data and status to database. Server scans for requests and processes them accordingly into llm. When finished, collection in database is updated with response and status. Client scans and fetches database for its updated request marked by id and status.
+Client sends request with request id, model id (requested beforehand) and user prompt. Server scans for requests and processes them accordingly into llm. When finished, response is avaiable from server at /get/[request id]
 
 ## Use Cases
 
