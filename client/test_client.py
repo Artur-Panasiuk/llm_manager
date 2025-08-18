@@ -6,13 +6,14 @@ import os
 
 load_dotenv()
 
-def send_prompt(prompt, model_id):
+def send_prompt(prompt, model_id, tokens):
     doc_id = str(uuid.uuid4())
 
     payload = {
         "task_id": doc_id,
-        "model_id": model_id,
-        "prompt": prompt
+        "model_name": model_id,
+        "prompt": prompt,
+        "tokens": tokens
     }
 
     try:
@@ -42,12 +43,13 @@ def ask_for_answer(doc_id):
         exit(1)
 
 if __name__ == "__main__":
-    [print(f"[{model[0]}]. {model[1]}") for model in ask_for_models()]
+    [print(f"{model}") for model in ask_for_models()]
 
-    model_id = input("Model id: ")
+    model_name = input("Model name: ")
     prompt = input("Prompt: ")
+    tokens = input("Tokens: ")
 
-    doc_id = send_prompt(prompt, model_id)
+    doc_id = send_prompt(prompt, model_name, tokens)
 
     timeout = 999  # seconds
     poll_interval = 2  # how often to check (in seconds)
