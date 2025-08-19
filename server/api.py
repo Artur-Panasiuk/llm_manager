@@ -1,6 +1,10 @@
 from flask import Flask, request, jsonify
 from queue_manager import waiting_queue, done_queue
 from models.model_base import BaseModel
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -41,4 +45,4 @@ def get_result(task_id):
         }), 202
 
 def start_server():
-    app.run(debug=False)
+    app.run(host=os.getenv("NETWORK_IP"), port=os.getenv("NETWORK_PORT"), debug=False)

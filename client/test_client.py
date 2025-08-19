@@ -17,7 +17,7 @@ def send_prompt(prompt, model_id, tokens):
     }
 
     try:
-        response = requests.post(f"{os.getenv("API_URL")}/request", json=payload)
+        response = requests.post(f"http://{os.getenv("NETWORK_IP")}:{os.getenv("NETWORK_PORT")}/request", json=payload)
         response.raise_for_status()
         return doc_id
     except Exception as e:
@@ -26,7 +26,7 @@ def send_prompt(prompt, model_id, tokens):
 
 def ask_for_models():
     try:
-        response = requests.get(f"{os.getenv("API_URL")}/models")
+        response = requests.get(f"http://{os.getenv("NETWORK_IP")}:{os.getenv("NETWORK_PORT")}/models")
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -35,7 +35,7 @@ def ask_for_models():
 
 def ask_for_answer(doc_id):
     try:
-        response = requests.get(f"{os.getenv("API_URL")}/get/{doc_id}")
+        response = requests.get(f"http://{os.getenv("NETWORK_IP")}:{os.getenv("NETWORK_PORT")}/get/{doc_id}")
         response.raise_for_status()
         return response.json()
     except Exception as e:
