@@ -4,9 +4,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 class Qwen(BaseModel):
-    path = "C:/Users/Artur/.cache/huggingface/hub/models--Qwen--Qwen2.5-Coder-3B"
-    tokenizer = None
-    model = None
+    def __init__(self):
+        super().__init__()
+        self.path = "C:/Users/Artur/.cache/huggingface/hub/models--Qwen--Qwen2.5-Coder-3B"
 
     def load(self):
         self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=False)

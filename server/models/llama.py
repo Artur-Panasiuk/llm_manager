@@ -4,9 +4,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 class Llama(BaseModel):
-    path = "C:/Users/Artur/.cache/huggingface/hub/models--codellama--CodeLlama-7b-Instruct-hf"
-    tokenizer = None
-    model = None
+    def __init__(self):
+        super().__init__()
+        self.path = "C:/Users/Artur/.cache/huggingface/hub/models--codellama--CodeLlama-7b-Instruct-hf"
 
     def load(self):
         self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=False)
