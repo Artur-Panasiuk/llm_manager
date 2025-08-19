@@ -51,8 +51,8 @@ if __name__ == "__main__":
 
     doc_id = send_prompt(prompt, model_name, tokens)
 
-    timeout = 999  # seconds
-    poll_interval = 2  # how often to check (in seconds)
+    timeout = 999
+    poll_interval = 2
     waited = 0
     result = None
 

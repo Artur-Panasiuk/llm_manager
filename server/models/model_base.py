@@ -16,7 +16,7 @@ class BaseModel:
     @classmethod
     def create(cls, name, *args, **kwargs):
         if name.lower() not in cls.registry:
-            raise ValueError(f"Nieznany model: {name}")
+            raise ValueError(f"Unknown model: {name}")
         return cls.registry[name.lower()](*args, **kwargs)
     
     @classmethod
